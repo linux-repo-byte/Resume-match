@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  @apply font-sans bg-slate-50 text-slate-900 antialiased;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2.5
+      text-sm font-semibold text-white shadow-sm transition
+      hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2
+      disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white
+      px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition
+      hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2;
+  }
+
+  .input-field {
+    @apply block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900
+      shadow-sm placeholder:text-slate-400 focus:border-brand-500 focus:outline-none
+      focus:ring-2 focus:ring-brand-500/30;
+  }
+
+  .card {
+    @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-card;
+  }
+
+  .label-text {
+    @apply mb-1.5 block text-sm font-medium text-slate-700;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .footer-link {
+    @apply text-sm text-slate-400 transition-colors hover:text-white;
+  }
+
+  .footer-social {
+    @apply grid h-8 w-8 place-items-center rounded-lg border border-slate-700 text-xs font-semibold text-slate-400 transition;
+  }
+
+  .footer-social:hover {
+    @apply border-brand-500 bg-brand-600 text-white;
+  }
+
+  .create-job-closed > .card:first-child,
+  .create-job-closed > form {
+    display: none;
+  }
+
+  .job-management-area section > .space-y-3 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .job-management-area > section {
+    grid-column: 1 / -1;
+  }
+
+  .job-management-area section > .space-y-3 > .card {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+
+  @media (min-width: 768px) {
+    .job-management-area section > .space-y-3 > .card {
+      width: auto;
+      flex: 1 1 calc(50% - 0.5rem);
+    }
+  }
+
+  .mt-10 .card table th:nth-child(4),
+  .mt-10 .card table td:nth-child(4),
+  .mt-10 .card table th:nth-child(5),
+  .mt-10 .card table td:nth-child(5) {
+    display: none;
+  }
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+.dark body,
+.dark .bg-slate-50 {
+  background-color: #0f172a !important;
+  color: #e2e8f0;
+}
+
+.dark .bg-white,
+.dark .bg-white\/80,
+.dark .card {
+  background-color: #1e293b !important;
+}
+
+.dark .bg-slate-100 {
+  background-color: #334155 !important;
+}
+
+.dark .bg-slate-200 {
+  background-color: #475569 !important;
+}
+
+.dark .text-slate-900,
+.dark .text-slate-700 {
+  color: #f1f5f9 !important;
+}
+
+.dark .text-slate-600,
+.dark .text-slate-500 {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-300 {
+  border-color: #475569 !important;
+}
+
+.dark .input-field,
+.dark select,
+.dark textarea {
+  background-color: #0f172a !important;
+  border-color: #64748b !important;
+  color: #f1f5f9 !important;
+}
+
+.dark .input-field::placeholder,
+.dark textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.dark .btn-secondary {
+  background-color: #1e293b !important;
+  border-color: #64748b !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .hover\:bg-slate-50:hover {
+  background-color: #334155 !important;
+}
+
+.dark .bg-red-50 {
+  background-color: #450a0a !important;
+}
+
+.dark .bg-amber-50 {
+  background-color: #451a03 !important;
+}
+
+.dark .bg-emerald-50 {
+  background-color: #052e16 !important;
+}
+
+.dark .bg-brand-50 {
+  background-color: #312e81 !important;
+}
