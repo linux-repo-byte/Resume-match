@@ -19,6 +19,7 @@ export const uploadResume = (file, onUploadProgress) => {
 };
 
 export const getMyResumes = () => api.get('/resumes/my');
+export const selectResume = (id) => api.patch(`/resumes/my/selected/${id}`);
 
 export const getResumeById = (id) => api.get(`/resumes/${id}`);
 

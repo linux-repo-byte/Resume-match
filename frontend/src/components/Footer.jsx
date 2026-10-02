@@ -20,7 +20,7 @@ export default function Footer() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr]">
           <div className="max-w-xs">
             <Link to="/" className="inline-flex items-center gap-2 text-white" aria-label="ResumeMatch home">
-              <img src="/logo-mark.svg" alt="ResumeMatch logo" className="h-9 w-9 rounded-lg object-cover" />
+              <img src="/logo-mark.png" alt="ResumeMatch logo" className="h-9 w-9 rounded-lg object-cover" />
               <span className="text-lg font-bold tracking-tight">Resume<span className="text-brand-400">Match</span></span>
             </Link>
             <p className="mt-4 text-sm leading-6 text-slate-400">A clearer way for candidates and recruiters to find the right fit.</p>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getMyResumes, uploadResume, deleteResume, downloadResumeFile } from '../api/resumeApi';
+import { getMyResumes, uploadResume, deleteResume, downloadResumeFile, selectResume } from '../api/resumeApi';
 
 const ACCEPTED_TYPES = [
   'application/pdf',
@@ -22,6 +22,8 @@ const formatBytes = (bytes) => {
 
 export default function ResumesPage() {
   const [resumes, setResumes] = useState([]);
+  const [selectedResumeId, setSelectedResumeId] = useState('');
+  const [selectingResumeId, setSelectingResumeId] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [uploadError, setUploadError] = useState('');
@@ -33,6 +35,7 @@ export default function ResumesPage() {
     try {
       const { data } = await getMyResumes();
       setResumes(data.resumes);
+      setSelectedResumeId(data.selectedResumeId || '');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load your resumes');
     } finally {
@@ -74,6 +77,7 @@ export default function ResumesPage() {
         if (evt.total) setProgress(Math.round((evt.loaded / evt.total) * 100));
       });
       setResumes((prev) => [data.resume, ...prev]);
+      setSelectedResumeId(data.selectedResumeId || '');
     } catch (err) {
       setUploadError(err.response?.data?.message || 'Upload failed. Please try again.');
     } finally {
@@ -86,10 +90,24 @@ export default function ResumesPage() {
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this resume? This cannot be undone.')) return;
     try {
-      await deleteResume(id);
+      const { data } = await deleteResume(id);
       setResumes((prev) => prev.filter((r) => r._id !== id));
+      setSelectedResumeId(data.selectedResumeId || '');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to delete resume');
+    }
+  };
+
+  const handleSelectResume = async (id) => {
+    setSelectingResumeId(id);
+    setError('');
+    try {
+      const { data } = await selectResume(id);
+      setSelectedResumeId(data.selectedResumeId);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to select this resume');
+    } finally {
+      setSelectingResumeId('');
     }
   };
 
@@ -105,8 +123,8 @@ export default function ResumesPage() {
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900">Your Resumes</h1>
-        <p className="mt-1 text-sm text-slate-600">
-          Upload a PDF or DOCX resume. Text is extracted automatically so it's ready for matching.
+          <p className="mt-1 text-sm text-slate-600">
+          Choose one parsed resume as your active resume for job matching and applications.
         </p>
       </div>
 
@@ -164,6 +182,7 @@ export default function ResumesPage() {
                   <th className="px-6 py-3 text-left font-medium text-slate-500">Type</th>
                   <th className="px-6 py-3 text-left font-medium text-slate-500">Size</th>
                   <th className="px-6 py-3 text-left font-medium text-slate-500">Status</th>
+                  <th className="px-6 py-3 text-left font-medium text-slate-500">Active</th>
                   <th className="px-6 py-3 text-left font-medium text-slate-500">Uploaded</th>
                   <th className="px-6 py-3 text-right font-medium text-slate-500">Actions</th>
                 </tr>
@@ -180,6 +199,22 @@ export default function ResumesPage() {
                       <span className={`badge capitalize ${statusStyles[r.status] || 'bg-slate-100 text-slate-700'}`}>
                         {r.status}
                       </span>
+                    </td>
+                    <td className="px-6 py-3">
+                      {selectedResumeId === r._id ? (
+                        <span className="badge bg-emerald-100 text-emerald-700">Selected</span>
+                      ) : r.status === 'parsed' ? (
+                        <button
+                          type="button"
+                          disabled={!!selectingResumeId}
+                          onClick={() => handleSelectResume(r._id)}
+                          className="font-semibold text-brand-600 hover:text-brand-700 disabled:opacity-50"
+                        >
+                          {selectingResumeId === r._id ? 'Selecting…' : 'Use for matching'}
+                        </button>
+                      ) : (
+                        <span className="text-slate-400">Unavailable</span>
+                      )}
                     </td>
                     <td className="px-6 py-3 text-slate-600">
                       {new Date(r.createdAt).toLocaleDateString()}

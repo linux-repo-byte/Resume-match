@@ -65,6 +65,146 @@ The application uses local resume parsing and a local matching engine. No extern
 
 ---
 
+## Algorithms Used
+
+This project uses a combination of rule-based extraction and lightweight statistical matching for resume-to-job evaluation.
+
+### 1. Text preprocessing
+- Lowercasing and normalization
+- Removal of noisy formatting and extra whitespace
+- Tokenization for keyword and matching analysis
+
+### 2. Skill extraction
+- Keyword-based matching against the local skill dataset
+- Frequency counting of relevant terms in resume text
+- Rule-based extraction of technical and domain-related skills
+
+### 3. Education extraction
+- Detection of education sections and headings
+- Degree and institution pattern recognition
+- Comparison of education levels such as high school, diploma, associate, bachelor, master, and doctorate
+
+### 4. Experience extraction
+- Detection of work history sections
+- Parsing of employment periods and years of experience
+- Estimation of total relevant experience from extracted timeline data
+
+### 5. Project extraction
+- Section-based project detection
+- Parsing of project name and description into structured records
+
+### 6. Keyword analysis
+- Frequency-based keyword ranking
+- Identification of major terms in a resume
+- Support for resume completeness and relevance scoring
+
+### 7. TF-IDF vectorization
+- Term frequency calculation per document
+- Inverse document frequency weighting to highlight important terms
+- Creation of numeric vectors for similarity comparison
+
+### 8. Cosine similarity
+- Measures similarity between resume and job description vectors
+- Converts the result into a percentage-based matching score
+
+### 9. Weighted matching engine
+- Combines multiple score components:
+  - skill match
+  - text similarity
+  - experience match
+  - education match
+- Produces a final weighted job-fit score
+
+### 10. Resume scoring heuristic
+- Evaluates completeness using education, experience, projects, keyword quality, and skill coverage
+- Returns an overall resume score between 0 and 100
+
+---
+
+## Modules Used in the Project
+
+### Frontend modules
+- React
+- React DOM
+- React Router DOM
+- Vite
+- Axios
+- Tailwind CSS
+- GSAP
+- Recharts
+- ESLint
+- PostCSS
+- Autoprefixer
+
+### Backend modules
+- Node.js
+- Express
+- CORS
+- Morgan
+- Cookie Parser
+- Dotenv
+- Mongoose
+- JWT
+- bcryptjs
+- Multer
+- pdf-parse
+- Mammoth
+- PDFKit
+- Nodemon
+
+### Application modules
+- Authentication module
+- Role-based authorization module
+- User profile module
+- Resume upload and parsing module
+- Resume analysis module
+- Job management module
+- Application management module
+- Recruiter dashboard module
+- Candidate dashboard module
+- Admin dashboard module
+- Matching engine module
+- File download and storage module
+- Job expiry and status management module
+- Profile picture upload module
+
+### Core backend services
+- fileService.js
+- pdfParserService.js
+- docxParserService.js
+- resumeParserService.js
+- textPreprocessingService.js
+- skillExtractionService.js
+- educationExtractionService.js
+- experienceExtractionService.js
+- projectExtractionService.js
+- keywordAnalysisService.js
+- tfidf.js
+- cosineSimilarity.js
+- skillMatcher.js
+- educationMatcher.js
+- experienceMatcher.js
+- matchingEngine.js
+- resumeAnalysisService.js
+- resumeScoringService.js
+- jobExpiryService.js
+- profilePictureService.js
+
+### Models and middleware
+- User.js
+- Job.js
+- Resume.js
+- Application.js
+- authMiddleware.js
+- roleMiddleware.js
+- errorMiddleware.js
+- generateToken.js
+- seedAdmin.js
+- matchingConfig.js
+- skillDataset.js
+
+---
+
 ## Project Structure
 
 ```text

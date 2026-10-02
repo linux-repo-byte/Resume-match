@@ -70,7 +70,7 @@ export default function RecruiterPipelinePage() {
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-600">Recruiter section</p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">Candidate pipeline</h1>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">Job overview</h1>
           <p className="mt-2 text-sm text-slate-600">Review recent submissions across your current job postings.</p>
         </div>
         <div className="flex gap-3">
@@ -116,8 +116,6 @@ export default function RecruiterPipelinePage() {
                   <th className="px-6 py-3">Candidate</th>
                   <th className="px-6 py-3">Role</th>
                   <th className="px-6 py-3">Match</th>
-                  <th className="px-6 py-3">Resume</th>
-                  <th className="px-6 py-3">Cover Letter</th>
                   <th className="px-6 py-3">Download Resume</th>
                   <th className="px-6 py-3">Download Cover Letter</th>
                   <th className="px-6 py-3">Status</th>
@@ -133,10 +131,6 @@ export default function RecruiterPipelinePage() {
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-slate-700">{application.job?.title}</td>
                     <td className="whitespace-nowrap px-6 py-4 font-semibold text-emerald-700">{application.match?.finalScore || 0}%</td>
-                    <td className="max-w-52 px-6 py-4 text-slate-600">{application.resume?.originalFileName || 'Resume uploaded'}</td>
-                    <td className="max-w-64 px-6 py-4">
-                      <p className="line-clamp-2 text-xs leading-5 text-slate-600">{application.coverLetter || 'No cover letter submitted'}</p>
-                    </td>
                     <td className="px-6 py-4">
                       <button
                         type="button"

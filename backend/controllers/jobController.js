@@ -1,9 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const Job = require('../models/Job');
-const Resume = require('../models/Resume');
-const { analyzeResume } = require('../services/resumeAnalysisService');
 const { matchResumeToJob } = require('../services/matchingEngine');
 const { expireJobs } = require('../services/jobExpiryService');
+const { resolveSelectedResume } = require('../services/candidateResumeService');
 
 const normalizeSkills = (skills) => {
   const values = Array.isArray(skills) ? skills : String(skills || '').split(',');
@@ -28,17 +27,6 @@ const jobPayload = (body) => ({
   status: body.status || 'open',
   expiresAt: body.expiresAt || undefined,
 });
-
-const getCandidateResume = async (candidateId) => {
-  const resume = await Resume.findOne({ candidate: candidateId, status: 'parsed' })
-    .sort({ createdAt: -1 })
-    .select('+extractedText');
-  if (!resume) return null;
-  return {
-    resume,
-    analysis: resume.analysis || analyzeResume(resume.extractedText),
-  };
-};
 
 const addCompatibility = (job, candidateResume) => {
   const item = job.toObject ? job.toObject() : job;
@@ -80,7 +68,7 @@ const getJobs = asyncHandler(async (req, res) => {
 
   const [jobs, candidateResume] = await Promise.all([
     Job.find(filters).populate('recruiter', 'name company').sort({ createdAt: -1 }),
-    req.user.role === 'candidate' ? getCandidateResume(req.user._id) : null,
+    req.user.role === 'candidate' ? resolveSelectedResume(req.user._id) : null,
   ]);
   res.status(200).json({ success: true, count: jobs.length, jobs: jobs.map((job) => addCompatibility(job, candidateResume)) });
 });
@@ -102,7 +90,7 @@ const getJobById = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('Job is no longer available');
   }
-  const candidateResume = req.user.role === 'candidate' ? await getCandidateResume(req.user._id) : null;
+  const candidateResume = req.user.role === 'candidate' ? await resolveSelectedResume(req.user._id) : null;
   res.status(200).json({ success: true, job: addCompatibility(job, candidateResume) });
 });
 

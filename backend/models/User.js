@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema(
       enum: ROLES,
       default: 'candidate',
     },
+    selectedResume: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Resume',
+      default: null,
+    },
     // Role-specific optional fields — kept minimal for the foundation phase.
     // These will be extended once resume/job features are built.
     company: {

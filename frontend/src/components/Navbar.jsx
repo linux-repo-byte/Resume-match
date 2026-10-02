@@ -29,7 +29,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
         <Link to="/" className="flex items-center gap-2">
-          <img src="/logo-mark.svg" alt="ResumeMatch logo" className="h-9 w-9 rounded-lg object-cover" />
+          <img src="/logo-mark.png" alt="ResumeMatch logo" className="h-9 w-9 rounded-lg object-cover" />
           <span className="text-lg font-bold tracking-tight text-slate-900">
             Resume<span className="text-brand-600">Match</span>
           </span>
@@ -44,7 +44,7 @@ export default function Navbar() {
               {user.role === 'recruiter' && <>
                 <Link to="/recruiter/jobs/active" className="hidden text-sm font-semibold text-slate-600 hover:text-brand-600 lg:inline">Open jobs</Link>
                 <Link to="/recruiter/jobs/expired" className="hidden text-sm font-semibold text-slate-600 hover:text-brand-600 lg:inline">Expired jobs</Link>
-                <Link to="/recruiter/pipeline" className="hidden text-sm font-semibold text-slate-600 hover:text-brand-600 lg:inline">Pipeline</Link>
+                <Link to="/recruiter/pipeline" className="hidden text-sm font-semibold text-slate-600 hover:text-brand-600 lg:inline"> Job overview</Link>
               </>}
               <span
                 className={`badge hidden sm:inline-flex ${roleBadgeStyles[user.role] || 'bg-slate-100 text-slate-700'}`}

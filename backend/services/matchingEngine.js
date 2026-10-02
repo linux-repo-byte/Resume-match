@@ -3,7 +3,7 @@ const { cosineSimilarity } = require('./cosineSimilarity');
 const { matchSkills } = require('./skillMatcher');
 const { matchExperience } = require('./experienceMatcher');
 const { matchEducation } = require('./educationMatcher');
-const { getMatchingWeights } = require('../config/matchingConfig');
+const { getMatchingWeights, MIN_COMPATIBILITY_SCORE } = require('../config/matchingConfig');
 
 const jobText = (job) => [
   job.title,
@@ -19,17 +19,17 @@ const matchResumeToJob = ({ resumeText = '', resumeAnalysis = {}, job, weights =
   const experienceMatch = matchExperience(resumeAnalysis.experience, job.requiredExperience);
   const educationScore = matchEducation(resumeAnalysis.education, job.educationRequirement);
   const similarityScore = cosineSimilarity(resumeVector, jobVector) * 100;
-  const finalScore = (skillMatch.score * weights.skill) +
+  const calculatedScore = Math.round((skillMatch.score * weights.skill) +
     (similarityScore * weights.similarity) +
     (experienceMatch.score * weights.experience) +
-    (educationScore * weights.education);
+    (educationScore * weights.education));
 
   return {
     skillScore: Math.round(skillMatch.score),
     similarityScore: Math.round(similarityScore),
     experienceScore: Math.round(experienceMatch.score),
     educationScore: Math.round(educationScore),
-    finalScore: Math.round(finalScore),
+    finalScore: calculatedScore >= MIN_COMPATIBILITY_SCORE ? calculatedScore : 0,
     matchedSkills: skillMatch.matchedSkills,
     missingSkills: skillMatch.missingSkills,
   };

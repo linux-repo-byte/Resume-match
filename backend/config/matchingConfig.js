@@ -5,6 +5,8 @@ const MATCHING_WEIGHTS = Object.freeze({
   education: 0.1,
 });
 
+const MIN_COMPATIBILITY_SCORE = 60;
+
 const getMatchingWeights = () => {
   const configured = {
     skill: Number(process.env.MATCH_WEIGHT_SKILL),
@@ -19,4 +21,4 @@ const getMatchingWeights = () => {
   return Object.fromEntries(Object.entries(configured).map(([key, value]) => [key, value / total]));
 };
 
-module.exports = { MATCHING_WEIGHTS, getMatchingWeights };
+module.exports = { MATCHING_WEIGHTS, MIN_COMPATIBILITY_SCORE, getMatchingWeights };

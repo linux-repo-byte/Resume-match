@@ -1,26 +1,17 @@
 const asyncHandler = require('express-async-handler');
 const Application = require('../models/Application');
 const Job = require('../models/Job');
-const Resume = require('../models/Resume');
-const { analyzeResume } = require('../services/resumeAnalysisService');
 const { matchResumeToJob } = require('../services/matchingEngine');
 const PDFDocument = require('pdfkit');
 const { expireJobs } = require('../services/jobExpiryService');
-
-const MIN_RECOMMENDATION_SCORE = 50;
-
-const getCandidateResume = async (candidateId, resumeId) => {
-  const filter = { candidate: candidateId, status: 'parsed' };
-  if (resumeId) filter._id = resumeId;
-  const resume = await Resume.findOne(filter).sort({ createdAt: -1 }).select('+extractedText');
-  return resume ? { resume, analysis: resume.analysis || analyzeResume(resume.extractedText) } : null;
-};
+const { MIN_COMPATIBILITY_SCORE } = require('../config/matchingConfig');
+const { resolveSelectedResume } = require('../services/candidateResumeService');
 
 const applyToJob = asyncHandler(async (req, res) => {
   await expireJobs();
   const [job, candidateResume] = await Promise.all([
     Job.findOne({ _id: req.params.jobId, status: 'open' }),
-    getCandidateResume(req.user._id, req.body.resumeId),
+    resolveSelectedResume(req.user._id),
   ]);
   if (!job) {
     res.status(404);
@@ -36,6 +27,10 @@ const applyToJob = asyncHandler(async (req, res) => {
     resumeAnalysis: candidateResume.analysis,
     job,
   });
+  if (match.finalScore < MIN_COMPATIBILITY_SCORE) {
+    res.status(403);
+    throw new Error(`Your resume must reach ${MIN_COMPATIBILITY_SCORE}% compatibility to apply. Update it for this role and try again.`);
+  }
   const application = await Application.create({
     job: job._id,
     candidate: req.user._id,
@@ -119,13 +114,13 @@ const downloadCoverLetter = asyncHandler(async (req, res) => {
 const getCandidateDashboard = asyncHandler(async (req, res) => {
   await expireJobs();
   const [candidateResume, applications, jobs] = await Promise.all([
-    getCandidateResume(req.user._id),
+    resolveSelectedResume(req.user._id),
     Application.find({ candidate: req.user._id }).populate('job', 'title company location').sort({ createdAt: -1 }).limit(5),
     Job.find({ status: 'open' }).sort({ createdAt: -1 }).limit(50),
   ]);
   const recommendations = candidateResume
     ? jobs.map((job) => ({ ...job.toObject(), compatibility: matchResumeToJob({ resumeText: candidateResume.resume.extractedText, resumeAnalysis: candidateResume.analysis, job }) }))
-      .filter((job) => job.compatibility.finalScore >= MIN_RECOMMENDATION_SCORE)
+      .filter((job) => job.compatibility.finalScore >= MIN_COMPATIBILITY_SCORE)
       .sort((left, right) => right.compatibility.finalScore - left.compatibility.finalScore)
       .slice(0, 5)
     : [];

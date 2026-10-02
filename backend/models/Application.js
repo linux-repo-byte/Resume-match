@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { MIN_COMPATIBILITY_SCORE } = require('../config/matchingConfig');
 
 const matchSnapshotSchema = new mongoose.Schema(
   {
@@ -26,7 +27,15 @@ const applicationSchema = new mongoose.Schema(
     },
     match: { type: matchSnapshotSchema, required: true },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      transform: (document, result) => {
+        if (result.match?.finalScore < MIN_COMPATIBILITY_SCORE) result.match.finalScore = 0;
+        return result;
+      },
+    },
+  }
 );
 
 applicationSchema.index({ job: 1, candidate: 1 }, { unique: true });

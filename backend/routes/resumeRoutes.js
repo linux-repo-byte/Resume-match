@@ -5,6 +5,7 @@ const { upload } = require('../services/fileService');
 const {
   uploadResume,
   getMyResumes,
+  selectMyResume,
   getResumeById,
   getResumeAnalysis,
   downloadResume,
@@ -31,6 +32,7 @@ const handleUpload = (req, res, next) => {
 
 router.post('/upload', authorize('candidate'), handleUpload, uploadResume);
 router.get('/my', authorize('candidate'), getMyResumes);
+router.patch('/my/selected/:resumeId', authorize('candidate'), selectMyResume);
 router.get('/:id/analysis', authorize('candidate'), getResumeAnalysis);
 router.get('/:id', authorize('candidate'), getResumeById);
 router.get('/:id/download', authorize('candidate', 'recruiter'), downloadResume);

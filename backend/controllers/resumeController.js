@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const Resume = require('../models/Resume');
 const Application = require('../models/Application');
 const Job = require('../models/Job');
+const { resolveSelectedResume, setSelectedResume } = require('../services/candidateResumeService');
 const { parseResumeFile } = require('../services/resumeParserService');
 const { analyzeResume } = require('../services/resumeAnalysisService');
 const { deleteFileFromDisk, ALLOWED_MIME_TYPES } = require('../services/fileService');
@@ -56,8 +57,9 @@ const uploadResume = asyncHandler(async (req, res) => {
   // Re-fetch through the default projection so the (potentially large)
   // text fields aren't echoed back in the upload response.
   const responseResume = await Resume.findById(resume._id);
+  const selectedResume = await resolveSelectedResume(req.user._id);
 
-  res.status(201).json({ success: true, resume: responseResume });
+  res.status(201).json({ success: true, resume: responseResume, selectedResumeId: selectedResume?.resume._id || null });
 });
 
 /**
@@ -66,8 +68,25 @@ const uploadResume = asyncHandler(async (req, res) => {
  * @access  Private/Candidate
  */
 const getMyResumes = asyncHandler(async (req, res) => {
-  const resumes = await Resume.find({ candidate: req.user._id }).sort({ createdAt: -1 });
-  res.status(200).json({ success: true, count: resumes.length, resumes });
+  const [resumes, selectedResume] = await Promise.all([
+    Resume.find({ candidate: req.user._id }).sort({ createdAt: -1 }),
+    resolveSelectedResume(req.user._id),
+  ]);
+  res.status(200).json({
+    success: true,
+    count: resumes.length,
+    resumes,
+    selectedResumeId: selectedResume?.resume._id || null,
+  });
+});
+
+const selectMyResume = asyncHandler(async (req, res) => {
+  const resume = await setSelectedResume(req.user._id, req.params.resumeId);
+  if (!resume) {
+    res.status(404);
+    throw new Error('Parsed resume not found');
+  }
+  res.status(200).json({ success: true, selectedResumeId: resume._id });
 });
 
 /**
@@ -156,8 +175,13 @@ const deleteResume = asyncHandler(async (req, res) => {
 
   deleteFileFromDisk(resume.filePath);
   await resume.deleteOne();
+  const selectedResume = await resolveSelectedResume(req.user._id);
 
-  res.status(200).json({ success: true, message: 'Resume deleted' });
+  res.status(200).json({
+    success: true,
+    message: 'Resume deleted',
+    selectedResumeId: selectedResume?.resume._id || null,
+  });
 });
 
-module.exports = { uploadResume, getMyResumes, getResumeById, getResumeAnalysis, downloadResume, deleteResume };
+module.exports = { uploadResume, getMyResumes, selectMyResume, getResumeById, getResumeAnalysis, downloadResume, deleteResume };

@@ -1,7 +1,4 @@
-/**
- * Skills are configuration, not controller logic. Add aliases or categories
- * here as the product's supported skill vocabulary grows.
- */
+
 module.exports = [
   { name: 'JavaScript', category: 'programming', aliases: ['javascript', 'js'] },
   { name: 'TypeScript', category: 'programming', aliases: ['typescript', 'ts'] },

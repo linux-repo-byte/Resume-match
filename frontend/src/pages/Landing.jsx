@@ -15,15 +15,33 @@ gsap.registerPlugin(ScrollTrigger);
 const features = [
   {
     title: 'Smart Resume Parsing',
-    desc: 'Upload a resume and let the platform extract skills, experience, and education automatically. (Coming soon)',
+    desc: 'Upload a resume and let the platform extract skills, experience, and education automatically.',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M7 3.75h7.25L18.5 8v12.25H7V3.75Z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M14 3.75V8h4.5M9.5 12h6M9.5 15.5h4" />
+      </svg>
+    ),
   },
   {
     title: 'AI Job Matching',
-    desc: 'Get ranked job recommendations based on how well your profile fits each posting. (Coming soon)',
+    desc: 'Get ranked job recommendations based on how well your profile fits each posting.',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+        <circle cx="11" cy="11" r="6.75" />
+        <path strokeLinecap="round" d="m16 16 4.25 4.25M11 7.5v7M7.5 11h7" />
+      </svg>
+    ),
   },
   {
     title: 'Recruiter Dashboard',
     desc: 'Post openings and instantly see a ranked shortlist of matching candidates.',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+        <circle cx="9" cy="8" r="3" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 19.25a5.25 5.25 0 0 1 10.5 0M16 11.5a2.5 2.5 0 1 0 0-5M16.25 14.25a4 4 0 0 1 4 4" />
+      </svg>
+    ),
   },
 ];
 
@@ -173,7 +191,9 @@ export default function Landing() {
         <div className="landing-feature-grid grid gap-5 sm:grid-cols-3">
           {features.map((f) => (
             <div key={f.title} className="landing-feature-card card transition hover:-translate-y-1 hover:shadow-cardHover">
-              <div className="landing-feature-icon mb-3 h-10 w-10 rounded-lg bg-brand-50 text-brand-600" />
+              <div className="landing-feature-icon mb-3 grid h-10 w-10 place-items-center rounded-lg bg-brand-50 text-brand-600">
+                <span className="h-5 w-5">{f.icon}</span>
+              </div>
               <h3 className="text-base font-semibold text-slate-900">{f.title}</h3>
               <p className="mt-2 text-sm text-slate-600">{f.desc}</p>
             </div>
