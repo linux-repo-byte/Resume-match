@@ -56,9 +56,10 @@ export default function Navbar() {
                   <ProfileAvatar user={user} className="h-8 w-8" textClassName="text-xs" />
                   <span className="hidden sm:inline">Hi, {user.name.split(' ')[0]}</span>
                 </button>
-                {profileOpen && <div className="absolute right-0 top-12 z-20 w-44 rounded-lg border border-slate-200 bg-white p-1 shadow-lg" role="menu">
+                {profileOpen && <div className="absolute right-0 top-12 z-20 w-56 rounded-lg border border-slate-200 bg-white p-1 shadow-lg" role="menu">
                   <Link to="/profile" className="block rounded-md px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" onClick={() => setProfileOpen(false)} role="menuitem">Profile</Link>
                   <Link to="/profile/password" className="block rounded-md px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" onClick={() => setProfileOpen(false)} role="menuitem">Change Password</Link>
+                  {user.role === 'candidate' && <Link to="/candidate/resumes" className="block rounded-md px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" onClick={() => setProfileOpen(false)} role="menuitem">Update &amp; Customize Resume</Link>}
                   <button type="button" className="block w-full rounded-md px-3 py-2 text-left text-sm font-semibold text-red-600 hover:bg-red-50" onClick={() => { setProfileOpen(false); handleLogout(); }} role="menuitem">Log out</button>
                 </div>}
               </div>

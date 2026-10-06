@@ -29,7 +29,7 @@ const matchResumeToJob = ({ resumeText = '', resumeAnalysis = {}, job, weights =
     similarityScore: Math.round(similarityScore),
     experienceScore: Math.round(experienceMatch.score),
     educationScore: Math.round(educationScore),
-    finalScore: calculatedScore >= MIN_COMPATIBILITY_SCORE ? calculatedScore : 0,
+    finalScore: calculatedScore,
     matchedSkills: skillMatch.matchedSkills,
     missingSkills: skillMatch.missingSkills,
   };
