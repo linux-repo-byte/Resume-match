@@ -4,16 +4,17 @@
  * so use this script to seed an admin directly into the database instead.
  *
  * Usage:
- *   node utils/seedAdmin.js "Admin Name" admin@example.com StrongPassword123
+ *   node utils/seedAdmin.js "Admin Name" admin@example.com [password]
  */
 require('dotenv').config();
 const mongoose = require('mongoose');
 const User = require('../models/User');
 
-const [, , name, email, password] = process.argv;
+const [, , name, email, suppliedPassword] = process.argv;
+const password = suppliedPassword || 'Admin@12345';
 
-if (!name || !email || !password) {
-  console.error('Usage: node utils/seedAdmin.js "Admin Name" admin@example.com StrongPassword123');
+if (!name || !email) {
+  console.error('Usage: node utils/seedAdmin.js "Admin Name" admin@example.com [password]');
   process.exit(1);
 }
 
@@ -22,7 +23,16 @@ const run = async () => {
 
   const existing = await User.findOne({ email });
   if (existing) {
-    console.log(`A user with email ${email} already exists (role: ${existing.role}).`);
+    if (existing.role !== 'admin') {
+      console.error(`A user with email ${email} already exists (role: ${existing.role}); password was not changed.`);
+      await mongoose.disconnect();
+      process.exitCode = 1;
+      return;
+    }
+
+    existing.password = password;
+    await existing.save();
+    console.log(`Admin password updated for ${existing.email}.`);
     await mongoose.disconnect();
     return;
   }

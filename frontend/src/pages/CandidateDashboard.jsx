@@ -7,12 +7,12 @@ import CandidateAnalytics from '../components/CandidateAnalytics';
 import { formatJobDate, getRemainingJobTime } from '../utils/jobDates';
 
 const scoreTone = (score) => (score >= 75 ? 'text-emerald-700' : score >= 50 ? 'text-amber-700' : 'text-slate-700');
-const statusStyles = {
-  applied: 'bg-slate-100 text-slate-700',
-  reviewing: 'bg-amber-50 text-amber-700',
-  shortlisted: 'bg-emerald-50 text-emerald-700',
-  rejected: 'bg-red-50 text-red-700',
-  withdrawn: 'bg-slate-100 text-slate-500',
+const statusLabels = {
+  applied: 'Awaiting review',
+  reviewing: 'Under review',
+  shortlisted: 'Shortlisted',
+  rejected: 'Not shortlisted',
+  withdrawn: 'Withdrawn',
 };
 
 export default function CandidateDashboard() {
@@ -36,8 +36,6 @@ export default function CandidateDashboard() {
 
   const resumeScore = dashboard?.resumeScore || 0;
   const coverage = dashboard?.skillCoverage || 0;
-  const applicationCounts = applications.reduce((counts, application) => ({ ...counts, [application.status]: (counts[application.status] || 0) + 1 }), {});
-
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <div className="mb-8">
@@ -64,13 +62,7 @@ export default function CandidateDashboard() {
           <section className="card"><div className="flex items-center justify-between"><div><h2 className="font-semibold text-slate-900">Recommended jobs</h2><p className="mt-1 text-xs text-slate-500">Only roles matched to your resume are shown.</p></div><Link to="/jobs" className="text-xs font-semibold text-brand-600">Browse all</Link></div><div className="mt-4 divide-y divide-slate-100">{dashboard.recommendedJobs.length ? dashboard.recommendedJobs.map((job) => <Link to={`/jobs/${job._id}`} className="flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0" key={job._id}><div className="min-w-0"><p className="truncate text-sm font-semibold text-slate-900">{job.title}</p><p className="mt-1 text-xs text-slate-500">{job.company || 'Open role'} · {job.location || 'Remote'}</p><p className="mt-2 text-[11px] text-slate-400">Posted {formatJobDate(job.createdAt)} · Expires {formatJobDate(job.expiresAt)}</p><p className="mt-1 text-[11px] font-medium text-brand-700">{getRemainingJobTime(job.expiresAt)}</p></div><span className="shrink-0 text-right"><strong className="block text-sm font-bold text-emerald-700">{job.compatibility.finalScore}%</strong><small className="text-[10px] text-slate-400">compatibility</small></span></Link>) : <p className="py-5 text-sm text-slate-500">No matched jobs yet. Upload a resume or check back after jobs are posted.</p>}</div></section>
         </div>
 
-        <section className="card mt-6"><div className="flex items-center justify-between"><h2 className="font-semibold text-slate-900">Recent applications</h2><Link to="/jobs" className="text-xs font-semibold text-brand-600">Find another role</Link></div>{dashboard.recentApplications.length ? <div className="mt-4 overflow-x-auto"><table className="min-w-full text-left text-sm"><thead className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400"><tr><th className="py-3 pr-4">Role</th><th className="py-3 pr-4">Match</th><th className="py-3 pr-4">Status</th><th className="py-3">Applied</th></tr></thead><tbody className="divide-y divide-slate-100">{dashboard.recentApplications.map((application) => <tr key={application._id}><td className="py-3 pr-4 font-medium text-slate-900">{application.job?.title}</td><td className="py-3 pr-4 font-semibold text-emerald-700">{application.match?.finalScore || 0}%</td><td className="py-3 pr-4 capitalize text-slate-600">{application.status}</td><td className="py-3 text-slate-500">{new Date(application.createdAt).toLocaleDateString()}</td></tr>)}</tbody></table></div> : <p className="mt-4 text-sm text-slate-500">Your applications will appear here.</p>}</section>
-
-        <section className="mt-6">
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-4"><div><p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-600">Application tracker</p><h2 className="mt-1 text-xl font-semibold text-slate-900">Your submission status</h2><p className="mt-1 text-sm text-slate-500">Follow every application from submission through review.</p></div><Link className="text-xs font-semibold text-brand-600" to="/jobs">Apply to another role</Link></div>
-          <div className="mb-4 grid gap-3 grid-cols-2 sm:grid-cols-4"><div className="card p-4"><p className="text-xs text-slate-500">Submitted</p><p className="mt-1 text-2xl font-bold text-slate-900">{applications.length}</p></div><div className="card p-4"><p className="text-xs text-slate-500">Reviewing</p><p className="mt-1 text-2xl font-bold text-amber-700">{applicationCounts.reviewing || 0}</p></div><div className="card p-4"><p className="text-xs text-slate-500">Shortlisted</p><p className="mt-1 text-2xl font-bold text-emerald-700">{applicationCounts.shortlisted || 0}</p></div><div className="card p-4"><p className="text-xs text-slate-500">Rejected</p><p className="mt-1 text-2xl font-bold text-red-700">{applicationCounts.rejected || 0}</p></div></div>
-          <div className="card overflow-hidden p-0">{applications.length ? <div className="overflow-x-auto"><table className="min-w-full text-left text-sm"><thead className="border-b border-slate-100 bg-slate-50 text-xs uppercase tracking-wide text-slate-400"><tr><th className="px-6 py-3">Role</th><th className="px-6 py-3">Company</th><th className="px-6 py-3">Match</th><th className="px-6 py-3">Status</th><th className="px-6 py-3">Submitted</th></tr></thead><tbody className="divide-y divide-slate-100">{applications.map((application) => <tr key={application._id}><td className="whitespace-nowrap px-6 py-4 font-semibold text-slate-900">{application.job?.title || 'Role unavailable'}</td><td className="whitespace-nowrap px-6 py-4 text-slate-600">{application.job?.company || 'Company unavailable'}</td><td className="whitespace-nowrap px-6 py-4 font-semibold text-emerald-700">{application.match?.finalScore || 0}%</td><td className="px-6 py-4"><span className={`badge capitalize ${statusStyles[application.status] || statusStyles.applied}`}>{application.status}</span></td><td className="whitespace-nowrap px-6 py-4 text-slate-500">{new Date(application.createdAt).toLocaleDateString()}</td></tr>)}</tbody></table></div> : <div className="px-6 py-8 text-sm text-slate-500">Your submitted applications will appear here.</div>}</div>
-        </section>
+        <section className="card mt-6"><div className="flex items-center justify-between"><h2 className="font-semibold text-slate-900">Recent applications</h2><Link to="/candidate/applications" className="text-xs font-semibold text-brand-600">View application portal →</Link></div>{dashboard.recentApplications.length ? <div className="mt-4 overflow-x-auto"><table className="min-w-full text-left text-sm"><thead className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400"><tr><th className="py-3 pr-4">Role</th><th className="py-3 pr-4">Match</th><th className="py-3 pr-4">Status</th><th className="py-3">Applied</th></tr></thead><tbody className="divide-y divide-slate-100">{dashboard.recentApplications.map((application) => <tr key={application._id}><td className="py-3 pr-4 font-medium text-slate-900">{application.job?.title}</td><td className="py-3 pr-4 font-semibold text-emerald-700">{application.match?.finalScore || 0}%</td><td className="py-3 pr-4 text-slate-600">{statusLabels[application.status] || application.status}</td><td className="py-3 text-slate-500">{new Date(application.createdAt).toLocaleDateString()}</td></tr>)}</tbody></table></div> : <p className="mt-4 text-sm text-slate-500">Your applications will appear here.</p>}</section>
       </>}
     </div>
   );
